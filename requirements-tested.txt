@@ -1,0 +1,8 @@
+# 本次本地测试实际解析的依赖版本，复现时可安装此文件。
+Django==5.2.18
+asgiref==3.13.0
+sqlparse==0.6.0
+tzdata==2026.5
+whitenoise==6.12.0
+gunicorn==23.0.0
+packaging==26.3

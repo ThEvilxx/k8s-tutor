@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}<h1>{% if attempt.is_correct %}回答正确{% else %}这道题需要再复习{% endif %}</h1>
+<div class="panel"><h2>{{ attempt.question.stem }}</h2><p>你的答案：{{ attempt.selected }}　标准答案：{{ attempt.answer_snapshot }}</p>
+<p>{{ attempt.reference_snapshot }}</p></div>
+{% if attempt.explanation %}<section class="panel"><h2>{{ attempt.explanation.get_mode_display }}</h2>
+<div class="explanation">{{ attempt.explanation.body }}</div>
+<h3>本次提供的相关资料</h3><ul>{% for ref in attempt.explanation.references %}
+<li><a href="{{ ref.url }}" target="_blank" rel="noopener noreferrer">{{ ref.title }}</a> · {{ ref.version }}</li>
+{% empty %}<li>没有可用的审核资料，使用教师标准解析。</li>{% endfor %}</ul></section>
+{% else %}<form method="post" action="{% url 'practice:explain' attempt.pk %}">{% csrf_token %}
+<button type="submit">获取讲解</button></form>{% endif %}
+<p><a href="{% url 'practice:question' attempt.question.pk %}">重新练习</a> · <a href="{% url 'practice:home' %}">返回题库</a></p>{% endblock %}

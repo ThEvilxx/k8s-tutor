@@ -1,0 +1,13 @@
+{% load static %}
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kubernetes 知识练习与错题讲解助手</title>
+<link rel="stylesheet" href="{% static 'style.css' %}"></head>
+<body><header><a href="{% url 'practice:home' %}">Kubernetes 学习助手</a>
+<nav>{% if user.is_authenticated %}<a href="{% url 'practice:mistakes' %}">我的错题</a>
+{% if user.is_staff %}<a href="/admin/">教师管理</a>{% endif %}
+<span>{{ user.username }}</span><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button>退出</button></form>{% endif %}</nav></header>
+<main><div class="status">课程期末项目 · {{ app_version }} · {% if llm_mode == 'api' %}API 讲解模式{% else %}演示模式 未调用大模型{% endif %}</div>
+{% block content %}{% endblock %}</main>
+<footer>讲解用于辅助学习。判分依据教师标准答案。引用链接为相关资料，不代表模型逐句核验。</footer></body></html>

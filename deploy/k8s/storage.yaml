@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: tutor-db-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes: [ReadWriteOnce]
+  volumeMode: Filesystem
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  local:
+    path: /srv/k8s-tutor/data
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values: [node2]
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tutor-db-pvc
+  namespace: k8s-tutor
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: ""
+  volumeName: tutor-db-pv
+  resources:
+    requests:
+      storage: 1Gi

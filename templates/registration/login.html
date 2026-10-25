@@ -1,0 +1,4 @@
+{% extends 'base.html' %}
+{% block content %}<h1>登录学习助手</h1><p>使用管理员创建的账号登录。教师可通过 Django 管理后台维护题库和资料。</p>
+<form method="post" class="panel">{% csrf_token %}{{ form.as_p }}
+<input type="hidden" name="next" value="{{ next }}"><button type="submit">登录</button></form>{% endblock %}

@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}<h1>我的错题记录</h1><p>每次错误作答单独保留，重练正确后历史记录仍在。</p>
+{% for attempt in attempts %}<article class="panel"><h2>{{ attempt.question.stem }}</h2>
+<p>{{ attempt.created_at|date:"Y-m-d H:i" }} · 你的选择 {{ attempt.selected }}</p>
+<a href="{% url 'practice:attempt' attempt.pk %}">查看解析</a> · <a href="{% url 'practice:question' attempt.question.pk %}">重练</a>
+</article>{% empty %}<p>暂无错题，可以从题库开始练习。</p>{% endfor %}{% endblock %}

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tutor-config
+  namespace: k8s-tutor
+data:
+  DJANGO_DEBUG: "False"
+  DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,172.26.168.201,172.26.168.200,172.26.168.199"
+  DJANGO_DB_PATH: "/data/db.sqlite3"
+  LLM_MODE: "mock"
+  APP_VERSION: "v1"

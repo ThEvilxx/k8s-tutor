@@ -1,0 +1,3 @@
+{% extends 'base.html' %}
+{% block content %}<span class="tag">{{ question.point.title }}</span><h1>{{ question.stem }}</h1>
+<form method="post" class="panel">{% csrf_token %}{{ form.as_p }}<button type="submit">提交答案</button></form>{% endblock %}

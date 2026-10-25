@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-tutor
+  namespace: k8s-tutor
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: k8s-tutor
+  template:
+    metadata:
+      labels:
+        app: k8s-tutor
+    spec:
+      imagePullSecrets:
+        - name: acr-pull-secret
+      initContainers:
+        - name: prepare
+          image: k8s-tutor:v1
+          command: ["/bin/sh", "-ec"]
+          args: ["python manage.py migrate --noinput && python manage.py seed_demo"]
+          envFrom:
+            - configMapRef:
+                name: tutor-config
+            - secretRef:
+                name: tutor-secrets
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      containers:
+        - name: web
+          image: k8s-tutor:v1
+          ports:
+            - name: http
+              containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: tutor-config
+            - secretRef:
+                name: tutor-secrets
+          readinessProbe:
+            httpGet:
+              path: /healthz/
+              port: http
+              httpHeaders:
+                - name: Host
+                  value: localhost
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /healthz/
+              port: http
+              httpHeaders:
+                - name: Host
+                  value: localhost
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: "1"
+              memory: 512Mi
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: tutor-db-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8s-tutor
+  namespace: k8s-tutor
+spec:
+  type: NodePort
+  selector:
+    app: k8s-tutor
+  ports:
+    - port: 8000
+      targetPort: http
+      nodePort: 30081
